@@ -6,6 +6,7 @@ const schema = z.object({
   PUBLIC_URL: z.string().url().optional(),
   CORS_ORIGINS: z.string().default("http://localhost:5173,http://127.0.0.1:5173"),
   MONGODB_URI: z.string().optional(),
+  MONGODB_DATA_DIR: z.string().optional(),
   LOCAL_AI: z.enum(["on", "off"]).default("on"),
   PRELOAD_MODELS: z.enum(["true", "false"]).default("true"),
   EXTENSIONS_DIR: z.string().optional(),

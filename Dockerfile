@@ -1,7 +1,7 @@
 # One image with the backend, the web app and the on-device models. No keys are baked in.
 #   docker build -t kanso .
-#   docker run -p 3000:3000 -v kanso-models:/root/.cache/desert-ant-models kanso
-# Then open http://localhost:3000. The volume keeps the on-device models (about 500 MB) between runs.
+#   docker run -p 3000:3000 -v kanso-models:/root/.cache/desert-ant-models -v kanso-data:/data/kanso kanso
+# Then open http://localhost:3000. The volumes keep the on-device models (about 500 MB) and your homes between runs.
 
 FROM node:25.4.0-bookworm-slim AS build
 RUN npm install -g pnpm@12.11.2
@@ -23,6 +23,7 @@ ENV NODE_ENV=production \
     PORT=3000 \
     WEB_DIR=/app/apps/frontend/dist \
     EXTENSIONS_DIR=/app/extensions \
-    MCP_AUTH=required
+    MCP_AUTH=required \
+    MONGODB_DATA_DIR=/data/kanso
 EXPOSE 3000
 CMD ["node", "apps/backend/dist/main"]

@@ -1,5 +1,6 @@
 import { Logger, Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
+import { mkdir } from "node:fs/promises";
 import { ConfigService } from "@/platform/config/config.service";
 
 @Module({
@@ -14,8 +15,11 @@ import { ConfigService } from "@/platform/config/config.service";
           return { uri };
         }
         const { MongoMemoryServer } = await import("mongodb-memory-server");
-        const server = await MongoMemoryServer.create({ instance: { dbName: "kanso" } });
-        logger.warn(`MONGODB_URI is not set, using an in-memory MongoDB at ${server.getUri("kanso")}`);
+        // With MONGODB_DATA_DIR the built-in database writes to disk, so homes and linked apps survive a restart.
+        const dbPath = config.get("MONGODB_DATA_DIR");
+        if (dbPath) await mkdir(dbPath, { recursive: true });
+        const server = await MongoMemoryServer.create({ instance: dbPath ? { dbName: "kanso", dbPath, storageEngine: "wiredTiger" } : { dbName: "kanso" } });
+        logger.warn(`MONGODB_URI is not set, using the built-in MongoDB at ${server.getUri("kanso")}${dbPath ? `, saved in ${dbPath}` : ", in memory only"}`);
         return { uri: server.getUri("kanso") };
       },
     }),

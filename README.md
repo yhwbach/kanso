@@ -32,14 +32,101 @@ The backend is a modular monolith. `src/platform` holds the shared kernel (confi
 
 ## Run it with Docker
 
-The quickest way to try Kanso. One container serves the web app, the API and the MCP endpoint on port 3000, with an in-memory database and no keys needed.
+The quickest way to try Kanso. One container serves the web app, the API and the MCP endpoint on port 3000, with a built-in database and no keys needed.
 
 ```bash
 docker build -t kanso .
-docker run -p 3000:3000 -v kanso-models:/root/.cache/desert-ant-models kanso
+docker run --name kanso -p 3000:3000 -v kanso-models:/root/.cache/desert-ant-models -v kanso-data:/data/kanso kanso
 ```
 
-Open http://localhost:3000 and choose Try the demo. The on-device models (about 500 MB) download on first start and the volume keeps them for next time; commands work straight away with a pattern fallback until they finish. Pass `-e TAVUS_API_KEY=...` or the `AWS_*` variables to turn on the video assistant or cloud code generation.
+Open http://localhost:3000 and choose Try the demo. The on-device models (about 500 MB) download on first start, which takes a few minutes; commands work straight away with a pattern fallback until they finish. The two volumes keep the models and your homes for next time, so `docker start kanso` picks up where you left off.
+
+Everything except the video assistant works without any accounts. To talk to Kanso face to face, follow [Turn on the video assistant](#turn-on-the-video-assistant). To have AWS Bedrock write automations instead of the local generator, add `-e AWS_REGION=... -e AWS_ACCESS_KEY_ID=... -e AWS_SECRET_ACCESS_KEY=...` to `docker run`.
+
+## Turn on the video assistant
+
+The video assistant is a Tavus PAL that controls your home through Kanso's MCP tools. It needs three things: a Tavus API key, a public https address for Kanso so Tavus can reach its tools, and a one-time setup that registers Kanso with Tavus.
+
+### 1. Get a Tavus API key
+
+1. Sign up or sign in at the [Tavus PAL Maker](https://maker.tavus.io/dev).
+2. Choose **API Key** in the sidebar, then **Create New Key**.
+3. Give it a name, leave the IP list empty, and choose **Create API Key**.
+4. Copy the key straight away. Tavus can't show it again, so if you lose it, create a new one.
+
+Keep the key to yourself. Never commit it or paste it into the web app; Kanso only reads it from the environment.
+
+### 2. Install Cloudflare Tunnel
+
+`cloudflared` gives the Kanso running on your computer a temporary public https address. Quick tunnels need no Cloudflare account.
+
+- macOS: `brew install cloudflared`
+- Windows: `winget install --id Cloudflare.cloudflared`
+- Debian or Ubuntu:
+  ```bash
+  curl -L -o cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+  sudo dpkg -i cloudflared.deb
+  ```
+- Fedora or RHEL:
+  ```bash
+  sudo dnf install https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-x86_64.rpm
+  ```
+- Any other system: download the binary for your platform from the [cloudflared releases](https://github.com/cloudflare/cloudflared/releases/latest).
+
+Check it works with `cloudflared --version`.
+
+### 3. Open the tunnel
+
+In its own terminal, leave this running:
+
+```bash
+cloudflared tunnel --url http://localhost:3000
+```
+
+It prints an address like `https://some-random-words.trycloudflare.com`. That is your public URL. Only `/mcp` and sign-in pages are useful through it: the web app's API refuses anything that doesn't come from your computer or home network, and every tool call needs a link approved by you.
+
+### 4. Set up Tavus
+
+With Docker, start Kanso with your key and the tunnel address. If a `kanso` container already exists, remove it first with `docker rm -f kanso`; your homes are kept in the `kanso-data` volume.
+
+```bash
+docker run -d --name kanso -p 3000:3000 \
+  -v kanso-models:/root/.cache/desert-ant-models -v kanso-data:/data/kanso \
+  -e TAVUS_API_KEY=your-key -e PUBLIC_URL=https://some-random-words.trycloudflare.com \
+  kanso
+```
+
+Open http://localhost:3000 and finish the short setup so you have a home. Then run the Tavus setup inside the container:
+
+```bash
+docker exec kanso node apps/backend/scripts/tavus-setup.ts
+```
+
+It creates the Kanso PAL, registers Kanso as its MCP connector, attaches Magic Canvas, and prints three things:
+
+- `TAVUS_PAL_ID` and `TAVUS_CONNECTOR_ID`. Note them down.
+- A link. Open it, and when Kanso asks for a link code, get one from **Link a device**, then **Show link code**, in the web app. Codes work once and expire after 10 minutes.
+
+Finally, restart Kanso with the two IDs added so the web app can start calls:
+
+```bash
+docker rm -f kanso
+docker run -d --name kanso -p 3000:3000 \
+  -v kanso-models:/root/.cache/desert-ant-models -v kanso-data:/data/kanso \
+  -e TAVUS_API_KEY=your-key -e PUBLIC_URL=https://some-random-words.trycloudflare.com \
+  -e TAVUS_PAL_ID=the-pal-id -e TAVUS_CONNECTOR_ID=the-connector-id \
+  kanso
+```
+
+Open http://localhost:3000, choose **Start a conversation** on the home screen and allow the camera and microphone. Ask it to turn on a light and watch the tile change.
+
+Without Docker, put the same values in `apps/backend/.env` (`TAVUS_API_KEY` and `PUBLIC_URL` first), start Kanso with `pnpm dev`, run `pnpm tavus:setup`, open the link it prints, add `TAVUS_PAL_ID` and `TAVUS_CONNECTOR_ID` to `.env`, and restart `pnpm dev`.
+
+### When the tunnel address changes
+
+A quick tunnel gets a new address every time `cloudflared` restarts. When that happens, start Kanso with the new `PUBLIC_URL` and the IDs you already have, then run the setup again. With `TAVUS_CONNECTOR_ID` set it repoints the existing connector instead of creating another one, and prints a fresh link to approve with a new link code. For an address that never changes, run Kanso on a host such as Railway (see [Deploy](#deploy)) or set up a named Cloudflare tunnel.
+
+Calls use your Tavus account's conversation minutes, so end them with the button on the call when you're done.
 
 ## Run it for development
 
@@ -69,12 +156,9 @@ curl -X POST http://localhost:3000/mcp \
 
 Alexa+ links to Kanso, not the other way round. Point the Alexa+ add-on at `<PUBLIC_URL>/mcp`; account linking uses Kanso's OAuth 2.1 server (`/.well-known/oauth-authorization-server`, PKCE S256, dynamic client registration). Once linked, Alexa+ sees your homes and devices through the MCP tools, including `list_homes` and `switch_home`. With `MCP_AUTH=required`, only linked clients can call tools. When an app asks to link, Kanso's consent page asks for a six-digit link code. Get it from Link a device in the web app on the computer running Kanso; the code is never shown through the public URL, works once, and expires after 10 minutes. Linked apps and their tokens are stored in MongoDB, so they survive restarts.
 
-### Connect the Tavus PAL
+### Use the microphone and camera on other devices
 
-1. Put `TAVUS_API_KEY` in `apps/backend/.env`.
-2. Expose the backend over https (Railway, or `cloudflared tunnel --url http://localhost:3000` locally) and set `PUBLIC_URL` to that URL. The tunnel carries `/mcp` and OAuth; the web app's `/api` only answers this computer and devices on your home network, plus Tavus webhooks. The dev server uses https with a self-signed certificate by default, because browsers only allow the microphone and camera on secure pages. Open `https://localhost:5173` here, or `https://<this computer's IP>:5173` on your phone over the same wifi, and accept the browser's warning once. The dev server proxies `/api` to the backend, so nothing else needs to be exposed.
-3. Run `pnpm tavus:setup`. It creates the Kanso PAL, registers the backend as an OAuth MCP connector, attaches Magic Canvas, and prints `TAVUS_PAL_ID` and `TAVUS_CONNECTOR_ID` for `.env`. Open the link it prints and enter a link code to let Tavus call your tools. When the public URL changes, run it again: it repoints the same connector and prints a fresh link.
-4. Restart the backend and click "Start conversation" on the dashboard.
+The dev server uses https with a self-signed certificate by default, because browsers only allow the microphone and camera on secure pages. Open `https://<this computer's IP>:5173` on your phone over the same wifi and accept the browser's warning once. The dev server proxies `/api` to the backend, so nothing else needs to be exposed. For the video assistant, see [Turn on the video assistant](#turn-on-the-video-assistant).
 
 ### Enable Bedrock code generation
 
