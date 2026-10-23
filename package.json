@@ -1,0 +1,25 @@
+{
+  "name": "kanso",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Kanso: local AI for fast, private voice control. A self-hosted MCP server for Alexa+ with on-device speech, PII redaction, and voice-to-tool scaffolding.",
+  "license": "MIT",
+  "packageManager": "pnpm@12.11.2",
+  "engines": {
+    "node": ">=25.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel --stream run dev",
+    "dev:backend": "pnpm --filter @kanso/backend run start:dev",
+    "dev:frontend": "pnpm --filter @kanso/frontend run dev",
+    "build": "pnpm -r run build",
+    "typecheck": "pnpm -r run typecheck",
+    "tavus:setup": "pnpm --filter @kanso/backend run tavus:setup"
+  },
+  "dependencies": {
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

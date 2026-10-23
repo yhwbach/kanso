@@ -1,0 +1,51 @@
+{
+  "name": "@kanso/backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Kanso API: a modular monolith on NestJS that hosts the MCP server, on-device models, and voice-to-tool scaffolding",
+  "license": "MIT",
+  "type": "commonjs",
+  "scripts": {
+    "build": "nest build",
+    "start": "node dist/main",
+    "start:dev": "nest start --watch",
+    "dev": "nest start --watch",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "gen:openapi": "nest build && LOCAL_AI=off node dist/openapi-export",
+    "tavus:setup": "node --env-file-if-exists=.env scripts/tavus-setup.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1149.0",
+    "@desert-ant-labs/clear": "^3.6.0",
+    "@desert-ant-labs/gist": "^3.6.0",
+    "@desert-ant-labs/redact": "^3.6.0",
+    "@desert-ant-labs/voz": "^3.6.0",
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "@nestjs/common": "^11.1.0",
+    "@nestjs/core": "^11.1.0",
+    "@nestjs/event-emitter": "^3.0.1",
+    "@nestjs/mongoose": "^11.0.3",
+    "@nestjs/platform-express": "^11.1.0",
+    "@nestjs/swagger": "^11.2.0",
+    "chokidar": "^4.0.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "dotenv": "^17.2.0",
+    "express": "^5.3.0",
+    "mongoose": "^8.18.0",
+    "onnxruntime-node": "^1.30.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.10",
+    "@nestjs/schematics": "^11.0.7",
+    "@swc/cli": "^0.7.8",
+    "@swc/core": "^1.13.5",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.6.0",
+    "mongodb-memory-server": "^11.3.0",
+    "typescript": "^5.9.2"
+  }
+}

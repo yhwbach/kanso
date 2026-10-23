@@ -1,0 +1,2621 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/environments": {
+      "get": {
+        "operationId": "listEnvironments",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EnvironmentView"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "The starter layouts a new home can begin with.",
+        "tags": [
+          "home"
+        ]
+      }
+    },
+    "/api/onboard": {
+      "post": {
+        "description": "There is no password. The returned user id is the only credential the web app needs.",
+        "operationId": "onboard",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OnboardRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeSnapshot"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create a user and their first home.",
+        "tags": [
+          "home"
+        ]
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "description": "Also marks this user as the active one for MCP tool calls that do not carry a user id.",
+        "operationId": "getHome",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeSnapshot"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Load a user with their homes, the active home's devices, connected devices and timers.",
+        "tags": [
+          "home"
+        ]
+      }
+    },
+    "/api/homes": {
+      "get": {
+        "operationId": "listHomes",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HomeView"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Every home the user has.",
+        "tags": [
+          "home"
+        ]
+      },
+      "post": {
+        "operationId": "createHome",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateHomeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeView"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Add a home. It becomes the active one.",
+        "tags": [
+          "home"
+        ]
+      }
+    },
+    "/api/homes/{homeId}": {
+      "patch": {
+        "operationId": "updateHome",
+        "parameters": [
+          {
+            "name": "homeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateHomeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeView"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Rename a home or change its icon.",
+        "tags": [
+          "home"
+        ]
+      },
+      "delete": {
+        "operationId": "deleteHome",
+        "parameters": [
+          {
+            "name": "homeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Remove a home and everything in it.",
+        "tags": [
+          "home"
+        ]
+      }
+    },
+    "/api/homes/{homeId}/activate": {
+      "post": {
+        "operationId": "activateHome",
+        "parameters": [
+          {
+            "name": "homeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserIdRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeSnapshot"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Make this the home that commands apply to.",
+        "tags": [
+          "home"
+        ]
+      }
+    },
+    "/api/homes/{homeId}/connected": {
+      "get": {
+        "operationId": "listConnectedDevices",
+        "parameters": [
+          {
+            "name": "homeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ConnectedDeviceView"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "The Alexa and hub devices linked to a home.",
+        "tags": [
+          "home"
+        ]
+      },
+      "post": {
+        "operationId": "connectDevice",
+        "parameters": [
+          {
+            "name": "homeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectDeviceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectedDeviceView"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Link an Alexa or hub device to a home.",
+        "tags": [
+          "home"
+        ]
+      }
+    },
+    "/api/homes/{homeId}/connected/{connectedId}": {
+      "delete": {
+        "operationId": "disconnectDevice",
+        "parameters": [
+          {
+            "name": "homeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "connectedId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Unlink a device from a home.",
+        "tags": [
+          "home"
+        ]
+      }
+    },
+    "/api/devices": {
+      "get": {
+        "operationId": "listDevices",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeviceStateView"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Devices in the active home.",
+        "tags": [
+          "home"
+        ]
+      }
+    },
+    "/api/devices/{deviceId}/power": {
+      "post": {
+        "operationId": "setDevicePower",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetPowerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionResultView"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Turn a device on or off.",
+        "tags": [
+          "home"
+        ]
+      }
+    },
+    "/api/devices/{deviceId}/lock": {
+      "post": {
+        "operationId": "setDeviceLock",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetLockRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionResultView"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Lock or unlock a lock.",
+        "tags": [
+          "home"
+        ]
+      }
+    },
+    "/api/devices/restart": {
+      "post": {
+        "operationId": "restartHub",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestartHubRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestartHubResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Restart an offline hub and replay the commands it blocked.",
+        "tags": [
+          "home"
+        ]
+      }
+    },
+    "/api/timers": {
+      "get": {
+        "operationId": "listTimers",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TimerView"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Running timers for a user.",
+        "tags": [
+          "home"
+        ]
+      },
+      "post": {
+        "operationId": "createTimer",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTimerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimerView"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Start a countdown timer.",
+        "tags": [
+          "home"
+        ]
+      }
+    },
+    "/api/timers/{timerId}/cancel": {
+      "post": {
+        "operationId": "cancelTimer",
+        "parameters": [
+          {
+            "name": "timerId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserIdRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Cancel a running timer.",
+        "tags": [
+          "home"
+        ]
+      }
+    },
+    "/api/local-ai/status": {
+      "get": {
+        "operationId": "getLocalAiStatus",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocalAiStatusView"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Which on-device models are loaded.",
+        "tags": [
+          "local-ai"
+        ]
+      }
+    },
+    "/api/local-ai/preload": {
+      "post": {
+        "operationId": "preloadLocalAi",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocalAiStatusView"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Load every model now instead of on first use.",
+        "tags": [
+          "local-ai"
+        ]
+      }
+    },
+    "/api/tools": {
+      "get": {
+        "operationId": "listTools",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolsOverview"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Every registered tool plus the state of each extension file.",
+        "tags": [
+          "tools"
+        ]
+      }
+    },
+    "/api/tools/prompt": {
+      "get": {
+        "operationId": "getCodegenPrompt",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "system": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "system"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "The system prompt sent to Bedrock when generating a tool.",
+        "tags": [
+          "tools"
+        ]
+      }
+    },
+    "/api/tools/scaffold": {
+      "post": {
+        "operationId": "scaffoldTool",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScaffoldToolRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Generate a tool from a spoken intent and hot-load it.",
+        "tags": [
+          "tools"
+        ]
+      }
+    },
+    "/api/tools/{name}/source": {
+      "get": {
+        "operationId": "getToolSource",
+        "parameters": [
+          {
+            "name": "name",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToolSourceView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Read the TypeScript behind a tool.",
+        "tags": [
+          "tools"
+        ]
+      }
+    },
+    "/api/tools/files/{fileName}": {
+      "put": {
+        "operationId": "saveToolSource",
+        "parameters": [
+          {
+            "name": "fileName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveToolSourceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaveToolSourceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Overwrite an extension file. The watcher reloads it at once.",
+        "tags": [
+          "tools"
+        ]
+      },
+      "delete": {
+        "operationId": "deleteToolFile",
+        "parameters": [
+          {
+            "name": "fileName",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Delete an extension file and unregister its tool.",
+        "tags": [
+          "tools"
+        ]
+      }
+    },
+    "/api/tools/{name}/run": {
+      "post": {
+        "operationId": "runTool",
+        "parameters": [
+          {
+            "name": "name",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunToolRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Invoke a tool directly, the way the PAL would over MCP.",
+        "tags": [
+          "tools"
+        ]
+      }
+    },
+    "/api/commands": {
+      "post": {
+        "description": "The text is redacted on-device, routed to the matching tools, and logged.",
+        "operationId": "sendTextCommand",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TextCommandRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Run a typed or already transcribed command.",
+        "tags": [
+          "commands"
+        ]
+      }
+    },
+    "/api/voice/command": {
+      "post": {
+        "description": "The audio is transcribed on-device with Desert Ant Voz and then handled like a text command. Returns 503 with code TRANSCRIPTION_UNAVAILABLE when the model is not loaded, in which case the client should transcribe in the browser and call the text endpoint.",
+        "operationId": "sendVoiceCommand",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-user-id",
+            "required": false,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "A RIFF WAV file. Any sample rate, PCM16 or float32, mono or stereo.",
+          "content": {
+            "audio/wav": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Run a spoken command from a WAV recording.",
+        "tags": [
+          "commands"
+        ]
+      }
+    },
+    "/api/privacy/log": {
+      "get": {
+        "operationId": "getCommandLog",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "maximum": 200
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CommandLogView"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Recent commands with their raw and redacted text.",
+        "tags": [
+          "privacy"
+        ]
+      }
+    },
+    "/api/privacy/telemetry": {
+      "get": {
+        "description": "Counts of anonymized action tags, how many commands touched a cloud service, and average latency per stage.",
+        "operationId": "getTelemetry",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TelemetrySummary"
+                }
+              }
+            }
+          }
+        },
+        "summary": "What left the home, aggregated.",
+        "tags": [
+          "privacy"
+        ]
+      }
+    },
+    "/api/events": {
+      "get": {
+        "description": "Each message has type, payload, userId and at. Types: device.updated, device.unreachable, timer.created, timer.finished, timer.cancelled, command.handled, tool.registered, tool.unregistered, tool.scaffolded, tool.invalid, tool.invoked, notification, tavus.webhook. A heartbeat is sent every 25 seconds.",
+        "operationId": "streamEvents",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Server-sent events for live UI updates.",
+        "tags": [
+          "realtime"
+        ]
+      }
+    },
+    "/api/oauth/link-code": {
+      "post": {
+        "description": "Only answers requests from this computer or the home network, never through the public tunnel.",
+        "operationId": "createLinkCode",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkCodeView"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Show a code for approving a new app.",
+        "tags": [
+          "oauth"
+        ]
+      }
+    },
+    "/api/tavus/status": {
+      "get": {
+        "operationId": "getTavusStatus",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TavusStatusView"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Whether the PAL can be started.",
+        "tags": [
+          "tavus"
+        ]
+      }
+    },
+    "/api/tavus/conversations": {
+      "post": {
+        "description": "The Tavus API key stays on the server. The browser only receives the conversation URL.",
+        "operationId": "createConversation",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateConversationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationView"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Start a video conversation with the Kanso PAL.",
+        "tags": [
+          "tavus"
+        ]
+      }
+    },
+    "/api/tavus/conversations/{id}/end": {
+      "post": {
+        "operationId": "endConversation",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OkResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary": "End a conversation so it stops billing.",
+        "tags": [
+          "tavus"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Kanso API",
+    "description": "Local-first voice control. The web app talks to this API; the Tavus PAL and Alexa+ talk to the MCP endpoint at /mcp, which is not part of this document.\n\nIdentity: there is no login. POST /api/onboard returns a user id, and every other call takes that id in the body or query. When it is left out, the most recently onboarded user is used.\n\nLive updates: subscribe to GET /api/events for server-sent events instead of polling.\n\nErrors: failures return { statusCode, message, error }.",
+    "version": "0.1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "EnvironmentView": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "example": "modern-apartment"
+          },
+          "label": {
+            "type": "string",
+            "example": "Modern Apartment"
+          },
+          "deviceCount": {
+            "type": "number",
+            "example": 8
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "deviceCount"
+        ]
+      },
+      "OnboardRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Alex",
+            "description": "What Kanso should call the user."
+          },
+          "homeName": {
+            "type": "string",
+            "example": "Modern Apartment",
+            "description": "The name of the first home."
+          },
+          "template": {
+            "type": "string",
+            "example": "modern-apartment",
+            "description": "One of the keys from GET /api/environments. Decides which devices the home starts with."
+          },
+          "privacyEnabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Mask names, numbers and addresses on this machine before a command is stored or routed."
+          }
+        },
+        "required": [
+          "name",
+          "homeName",
+          "template"
+        ]
+      },
+      "UserView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "66f1c2a5f0a1b2c3d4e5f607"
+          },
+          "name": {
+            "type": "string",
+            "example": "Alex"
+          },
+          "privacyEnabled": {
+            "type": "boolean"
+          },
+          "activeHomeId": {
+            "type": "string",
+            "description": "The home commands apply to."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "privacyEnabled",
+          "activeHomeId",
+          "createdAt"
+        ]
+      },
+      "HomeView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "example": "Lake Cabin"
+          },
+          "template": {
+            "type": "string",
+            "example": "family-house"
+          },
+          "icon": {
+            "type": "string",
+            "description": "An SVG the user chose. When empty the app draws one from the name."
+          },
+          "deviceCount": {
+            "type": "number"
+          },
+          "connectedCount": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "template",
+          "deviceCount",
+          "connectedCount",
+          "createdAt"
+        ]
+      },
+      "DeviceStateView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "living-room-lights"
+          },
+          "name": {
+            "type": "string",
+            "example": "Living Room Lights"
+          },
+          "room": {
+            "type": "string",
+            "example": "Living Room"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "light",
+              "lock",
+              "thermostat",
+              "fan",
+              "hub",
+              "speaker"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "online",
+              "offline",
+              "error"
+            ]
+          },
+          "isOn": {
+            "type": "boolean"
+          },
+          "locked": {
+            "type": "boolean",
+            "description": "Only meaningful for locks."
+          },
+          "temperature": {
+            "type": "number",
+            "description": "Target temperature in Fahrenheit. Only on thermostats."
+          },
+          "hubId": {
+            "type": "string",
+            "example": "backyard-hub",
+            "description": "The hub this device depends on."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "room",
+          "type",
+          "status",
+          "isOn",
+          "locked"
+        ]
+      },
+      "ConnectedDeviceView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "echo-show",
+              "echo-dot",
+              "echo-studio",
+              "echo-hub",
+              "fire-tv",
+              "hue-bridge",
+              "other"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "example": "Kitchen Echo Show"
+          },
+          "room": {
+            "type": "string",
+            "example": "Kitchen"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "name",
+          "createdAt"
+        ]
+      },
+      "TimerView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "t_m1x9k2ab"
+          },
+          "label": {
+            "type": "string",
+            "example": "Timer"
+          },
+          "durationMs": {
+            "type": "number",
+            "example": 900000
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "durationMs",
+          "endsAt",
+          "createdAt"
+        ]
+      },
+      "HomeSnapshot": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UserView"
+          },
+          "homes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HomeView"
+            }
+          },
+          "activeHome": {
+            "$ref": "#/components/schemas/HomeView"
+          },
+          "devices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeviceStateView"
+            }
+          },
+          "connected": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectedDeviceView"
+            }
+          },
+          "timers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimerView"
+            }
+          }
+        },
+        "required": [
+          "user",
+          "homes",
+          "activeHome",
+          "devices",
+          "connected",
+          "timers"
+        ]
+      },
+      "ApiErrorResponse": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "text is required",
+            "description": "What went wrong, in plain words."
+          },
+          "error": {
+            "type": "string",
+            "example": "Bad Request"
+          }
+        },
+        "required": [
+          "statusCode",
+          "message"
+        ]
+      },
+      "CreateHomeRequest": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "example": "Lake Cabin"
+          },
+          "template": {
+            "type": "string",
+            "example": "family-house",
+            "description": "Which devices to start with. Defaults to a layout guessed from the name."
+          },
+          "icon": {
+            "type": "string",
+            "description": "An SVG for the home's icon. Leave empty to get a generated one."
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "UpdateHomeRequest": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "example": "Lake Cabin"
+          },
+          "icon": {
+            "type": "string",
+            "description": "Send an empty string to go back to the generated icon."
+          }
+        }
+      },
+      "OkResponse": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ok"
+        ]
+      },
+      "UserIdRequest": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          }
+        }
+      },
+      "ConnectDeviceRequest": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "echo-show",
+              "echo-dot",
+              "echo-studio",
+              "echo-hub",
+              "fire-tv",
+              "hue-bridge",
+              "other"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "example": "Kitchen Echo Show"
+          },
+          "room": {
+            "type": "string",
+            "example": "Kitchen"
+          }
+        },
+        "required": [
+          "kind",
+          "name"
+        ]
+      },
+      "SetPowerRequest": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "Defaults to the most recently onboarded user."
+          },
+          "on": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "on"
+        ]
+      },
+      "ActionResultView": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": "string",
+            "enum": [
+              "DEVICE_NOT_FOUND",
+              "HUB_OFFLINE",
+              "UNSUPPORTED"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "example": "Living Room Lights on.",
+            "description": "Short enough to speak aloud."
+          },
+          "device": {
+            "$ref": "#/components/schemas/DeviceStateView"
+          },
+          "hub": {
+            "description": "The offline hub when error is HUB_OFFLINE.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DeviceStateView"
+              }
+            ]
+          },
+          "candidates": {
+            "description": "Closest matches when error is DEVICE_NOT_FOUND.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeviceStateView"
+            }
+          }
+        },
+        "required": [
+          "ok",
+          "message"
+        ]
+      },
+      "SetLockRequest": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "locked": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "locked"
+        ]
+      },
+      "RestartHubRequest": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "hubId": {
+            "type": "string",
+            "example": "backyard-hub",
+            "description": "Defaults to the home's first hub."
+          }
+        }
+      },
+      "RestartHubResponse": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "hub": {
+            "$ref": "#/components/schemas/DeviceStateView"
+          },
+          "applied": {
+            "description": "Devices whose pending command was replayed once the hub came back.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeviceStateView"
+            }
+          },
+          "message": {
+            "type": "string",
+            "example": "Hub restarted. Backyard Lights on."
+          }
+        },
+        "required": [
+          "ok",
+          "hub",
+          "applied",
+          "message"
+        ]
+      },
+      "CreateTimerRequest": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "durationMs": {
+            "type": "number",
+            "example": 900000,
+            "minimum": 1000
+          },
+          "label": {
+            "type": "string",
+            "example": "Pasta"
+          }
+        },
+        "required": [
+          "durationMs"
+        ]
+      },
+      "LocalAiStatusView": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "False when LOCAL_AI=off."
+          },
+          "voz": {
+            "type": "string",
+            "enum": [
+              "idle",
+              "loading",
+              "ready",
+              "unavailable"
+            ],
+            "description": "Speech recognition (Desert Ant Voz)."
+          },
+          "redact": {
+            "type": "string",
+            "enum": [
+              "idle",
+              "loading",
+              "ready",
+              "unavailable"
+            ],
+            "description": "PII redaction (Desert Ant Redact)."
+          },
+          "gist": {
+            "type": "string",
+            "enum": [
+              "idle",
+              "loading",
+              "ready",
+              "unavailable"
+            ],
+            "description": "Topic tagging (Desert Ant Gist)."
+          },
+          "clear": {
+            "type": "string",
+            "enum": [
+              "idle",
+              "loading",
+              "ready",
+              "unavailable"
+            ],
+            "description": "Speech enhancement before transcription (Desert Ant Clear)."
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Load errors keyed by model name."
+          }
+        },
+        "required": [
+          "enabled",
+          "voz",
+          "redact",
+          "gist",
+          "clear",
+          "errors"
+        ]
+      },
+      "ToolView": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "control_device"
+          },
+          "description": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "core",
+              "extension"
+            ],
+            "description": "Core tools ship with Kanso. Extensions are files in the extensions directory."
+          },
+          "fileName": {
+            "type": "string",
+            "example": "check-front-door-m1x9k2.ts",
+            "description": "Set for extensions only."
+          },
+          "registeredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "inputSchema": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "JSON Schema for the tool input."
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "source",
+          "registeredAt",
+          "inputSchema"
+        ]
+      },
+      "ExtensionView": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string"
+          },
+          "toolName": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "loaded",
+              "error"
+            ]
+          },
+          "error": {
+            "type": "string",
+            "description": "Why the file could not be loaded."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "intent": {
+            "type": "string",
+            "description": "The spoken request this tool was generated from."
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "bedrock",
+              "local-template"
+            ]
+          },
+          "daily": {
+            "type": "string",
+            "example": "20:40",
+            "description": "Local 24-hour time the automation runs on its own every day."
+          }
+        },
+        "required": [
+          "fileName",
+          "status",
+          "updatedAt"
+        ]
+      },
+      "CodegenStatusView": {
+        "type": "object",
+        "properties": {
+          "configured": {
+            "type": "boolean",
+            "description": "True when AWS credentials are present and Bedrock will be used."
+          },
+          "modelId": {
+            "type": "string",
+            "example": "anthropic.claude-opus-5-5"
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "configured",
+          "modelId",
+          "region"
+        ]
+      },
+      "ToolsOverview": {
+        "type": "object",
+        "properties": {
+          "tools": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ToolView"
+            }
+          },
+          "extensions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExtensionView"
+            }
+          },
+          "codegen": {
+            "$ref": "#/components/schemas/CodegenStatusView"
+          },
+          "extensionsDir": {
+            "type": "string",
+            "description": "Absolute path of the watched extensions directory."
+          }
+        },
+        "required": [
+          "tools",
+          "extensions",
+          "codegen",
+          "extensionsDir"
+        ]
+      },
+      "ScaffoldToolRequest": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "intent": {
+            "type": "string",
+            "example": "check my front door lock and alert me if it is unlocked after 10 PM"
+          }
+        },
+        "required": [
+          "intent"
+        ]
+      },
+      "ScaffoldToolResponse": {
+        "type": "object",
+        "properties": {
+          "tool": {
+            "$ref": "#/components/schemas/ToolView"
+          },
+          "fileName": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string",
+            "description": "The generated TypeScript."
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "bedrock",
+              "local-template"
+            ]
+          },
+          "modelId": {
+            "type": "string"
+          },
+          "ms": {
+            "type": "number",
+            "description": "Generation time in milliseconds."
+          },
+          "daily": {
+            "type": "string",
+            "example": "20:40",
+            "description": "Local 24-hour time the automation runs on its own every day."
+          }
+        },
+        "required": [
+          "tool",
+          "fileName",
+          "code",
+          "engine",
+          "ms"
+        ]
+      },
+      "ToolSourceView": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "editable": {
+            "type": "boolean",
+            "description": "Core tools cannot be edited."
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "core",
+              "extension"
+            ]
+          },
+          "fileName": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "name",
+          "editable",
+          "source",
+          "code"
+        ]
+      },
+      "SaveToolSourceRequest": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "The full TypeScript file contents."
+          }
+        },
+        "required": [
+          "code"
+        ]
+      },
+      "SaveToolSourceResponse": {
+        "type": "object",
+        "properties": {
+          "tool": {
+            "$ref": "#/components/schemas/ToolView"
+          },
+          "record": {
+            "$ref": "#/components/schemas/ExtensionView"
+          }
+        },
+        "required": [
+          "tool",
+          "record"
+        ]
+      },
+      "RunToolRequest": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "RunToolResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Whatever the tool returned."
+          },
+          "ms": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "result",
+          "ms"
+        ]
+      },
+      "TextCommandRequest": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string",
+            "example": "Turn on the living room lights and set a timer for 15 minutes"
+          },
+          "transcribeMs": {
+            "type": "number",
+            "description": "How long the browser took to transcribe, when the text came from speech."
+          },
+          "engine": {
+            "type": "string",
+            "example": "web-speech",
+            "description": "What produced the text: typed, web-speech, or desert-ant-voz."
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "CommandResult": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "description": "False when any action failed, for example a device was not found."
+          },
+          "transcript": {
+            "type": "string",
+            "description": "What was heard or typed, before redaction."
+          },
+          "sanitized": {
+            "type": "string",
+            "description": "The text after on-device PII redaction. This is what gets routed and logged."
+          },
+          "piiDetected": {
+            "type": "boolean"
+          },
+          "piiLabels": {
+            "example": [
+              "PHONE"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "topics": {
+            "example": [
+              "home-lighting"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "description": "One entry per action taken, with ok, kind, and device fields."
+          },
+          "reply": {
+            "type": "string",
+            "example": "Living Room Lights on. Timer set for 15 minutes.",
+            "description": "Short enough to speak aloud."
+          },
+          "latency": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            },
+            "example": {
+              "transcribe": 140,
+              "redact": 12,
+              "route": 1,
+              "execute": 9,
+              "total": 162
+            }
+          },
+          "cloudEgress": {
+            "type": "boolean",
+            "description": "True when a cloud service was contacted, which only happens for tool generation."
+          },
+          "engines": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "example": {
+              "transcribe": "desert-ant-voz",
+              "redact": "desert-ant-redact"
+            }
+          },
+          "logId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "ok",
+          "transcript",
+          "sanitized",
+          "piiDetected",
+          "piiLabels",
+          "topics",
+          "actions",
+          "reply",
+          "latency",
+          "cloudEgress",
+          "engines",
+          "logId"
+        ]
+      },
+      "CommandLogView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "rawText": {
+            "type": "string"
+          },
+          "sanitizedText": {
+            "type": "string"
+          },
+          "piiDetected": {
+            "type": "boolean"
+          },
+          "piiLabels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "local",
+              "pal"
+            ]
+          },
+          "latency": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "reply": {
+            "type": "string"
+          },
+          "telemetry": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "description": "The anonymized tags that are the only thing allowed to leave the home."
+          },
+          "cloudEgress": {
+            "type": "boolean"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "rawText",
+          "sanitizedText",
+          "piiDetected",
+          "piiLabels",
+          "topics",
+          "source",
+          "latency",
+          "actions",
+          "reply",
+          "telemetry",
+          "cloudEgress",
+          "timestamp"
+        ]
+      },
+      "LatencySummary": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "nullable": true
+          },
+          "transcribe": {
+            "type": "number",
+            "nullable": true
+          },
+          "redact": {
+            "type": "number",
+            "nullable": true
+          },
+          "route": {
+            "type": "number",
+            "nullable": true
+          },
+          "execute": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": [
+          "total",
+          "transcribe",
+          "redact",
+          "route",
+          "execute"
+        ]
+      },
+      "TelemetryEvent": {
+        "type": "object",
+        "properties": {
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "cloud": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "at",
+          "tags",
+          "cloud"
+        ]
+      },
+      "TelemetrySummary": {
+        "type": "object",
+        "properties": {
+          "commands": {
+            "type": "number"
+          },
+          "piiRedacted": {
+            "type": "number",
+            "description": "Commands where at least one PII item was redacted."
+          },
+          "cloudEgressCount": {
+            "type": "number",
+            "description": "Commands that contacted a cloud service."
+          },
+          "localOnlyCount": {
+            "type": "number"
+          },
+          "byAction": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "example": {
+              "control_device": 12,
+              "set_timer": 3
+            }
+          },
+          "byTopic": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "avgLatency": {
+            "description": "Average milliseconds per stage.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LatencySummary"
+              }
+            ]
+          },
+          "recentTags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TelemetryEvent"
+            }
+          }
+        },
+        "required": [
+          "commands",
+          "piiRedacted",
+          "cloudEgressCount",
+          "localOnlyCount",
+          "byAction",
+          "byTopic",
+          "avgLatency",
+          "recentTags"
+        ]
+      },
+      "LinkCodeView": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "482913",
+            "description": "Six digits the owner types on the consent page when linking Alexa or another app."
+          },
+          "expiresAt": {
+            "type": "string",
+            "example": "2026-10-11T18:10:00.000Z",
+            "description": "The code stops working after this time."
+          }
+        },
+        "required": [
+          "code",
+          "expiresAt"
+        ]
+      },
+      "TavusStatusView": {
+        "type": "object",
+        "properties": {
+          "configured": {
+            "type": "boolean",
+            "description": "True when both TAVUS_API_KEY and TAVUS_PAL_ID are set."
+          },
+          "palId": {
+            "type": "string",
+            "nullable": true
+          },
+          "hasApiKey": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "configured",
+          "palId",
+          "hasApiKey"
+        ]
+      },
+      "CreateConversationRequest": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          }
+        }
+      },
+      "ConversationView": {
+        "type": "object",
+        "properties": {
+          "conversation_id": {
+            "type": "string",
+            "example": "c123456"
+          },
+          "conversation_url": {
+            "type": "string",
+            "example": "https://tavus.daily.co/c123456",
+            "description": "Pass this to the Conversation component."
+          },
+          "status": {
+            "type": "string",
+            "example": "active"
+          }
+        },
+        "required": [
+          "conversation_id",
+          "conversation_url",
+          "status"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,263 @@
+.containerWrapper {
+	width: 100%;
+	height: 100%;
+	container-type: inline-size;
+	container-name: conversation;
+}
+
+.container {
+	position: relative;
+	width: 100%;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	overflow: hidden;
+	background: linear-gradient(135deg, #4b5563 0%, #1f2937 100%);
+	background-size: 400% 400%;
+	animation: gradient 15s ease infinite;
+}
+
+.errorContainer {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(248, 250, 252, 0.08);
+	color: white;
+	height: 100%;
+	font-size: 1.5rem;
+	font-weight: 600;
+	text-align: center;
+}
+
+.videoContainer {
+	position: relative;
+	z-index: 5;
+	width: 100%;
+	height: 100%;
+}
+
+.footer {
+	position: absolute;
+	bottom: 1.5rem;
+	left: 0;
+	right: 0;
+	z-index: 20;
+	transition:
+		opacity 0.3s ease,
+		transform 0.3s ease;
+}
+
+.footerLeaving {
+	opacity: 0;
+	transform: translateY(20px);
+	pointer-events: none;
+}
+
+.footerControls {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+}
+
+.moreMenu {
+	display: block;
+	position: relative;
+}
+
+.moreButton {
+	position: relative;
+	height: 2.5rem;
+	width: 2.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 2px;
+	backdrop-filter: blur(8px);
+	background-color: rgba(0, 0, 0, 0.6);
+	border: none;
+	color: #fff;
+	cursor: pointer;
+	transition: background-color 0.15s ease;
+}
+
+.moreButtonActive {
+	background-color: #f2f2f2;
+	color: #0b0b0b;
+}
+
+.morePopover {
+	position: absolute;
+	bottom: calc(100% + 0.5rem);
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	z-index: 30;
+}
+
+.leaveButton {
+	height: 2.5rem;
+	width: 2.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	border-radius: 2px;
+	background-color: #d71921;
+	color: #fff;
+	cursor: pointer;
+	transition: filter 0.15s ease;
+}
+
+.leaveButton:hover {
+	filter: brightness(1.1);
+}
+
+.leaveButtonIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+@container conversation (max-width: 400px) {
+	.footerControls {
+		gap: 8px;
+	}
+	.moreButton,
+	.leaveButton {
+		height: 2.5rem;
+		width: 2.5rem;
+	}
+}
+
+/* ReplicaVideo styles */
+.mainVideoContainer {
+	background: transparent;
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
+.mainVideoContainerScreenSharing {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.mainVideo {
+	position: absolute;
+	inset: 0;
+	object-position: center 30%;
+	object-fit: cover !important;
+	height: 100%;
+	width: 100%;
+	transition: all 0.3s ease;
+}
+
+.mainVideoScreenSharing {
+	object-fit: contain !important;
+}
+
+.mainVideoHidden {
+	display: none;
+}
+
+/* PreviewVideo styles */
+.previewVideoContainer {
+	position: relative;
+	background: rgba(2, 6, 23, 0.3);
+	aspect-ratio: 1/1;
+	width: 6rem;
+	border-radius: 0.75rem;
+	overflow: hidden;
+	z-index: 10;
+}
+
+@container conversation (min-width: 768px) {
+	.previewVideoContainer {
+		width: 7rem;
+	}
+}
+
+@container conversation (min-width: 1024px) {
+	.previewVideoContainer {
+		width: 8rem;
+	}
+}
+
+.previewVideoContainerHidden {
+	background: transparent;
+	display: none;
+}
+
+.previewVideo {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.previewVideoHidden {
+	display: none;
+}
+
+/* Main video container */
+.mainVideoContainer {
+	width: 100%;
+	height: 100%;
+}
+
+/* Self view container — pinned to top-right so captions own the bottom band. */
+.selfViewContainer {
+	position: absolute;
+	top: 1rem;
+	left: 1rem;
+	display: flex;
+	align-items: flex-end;
+	flex-direction: column;
+	gap: 0.5rem;
+	z-index: 15;
+}
+
+.selfViewContainer video {
+	object-position: center center;
+	object-fit: cover;
+}
+
+/* Waiting message container */
+/* Start of Selection */
+.waitingContainer {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: transparent;
+	color: white;
+	height: 100%;
+	font-size: 1.5rem;
+	font-weight: 600;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+/* End of Selection */
+
+.audioWaveContainer {
+	position: absolute;
+	bottom: 0.5rem;
+	right: 0.5rem;
+}

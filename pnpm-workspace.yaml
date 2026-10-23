@@ -1,0 +1,33 @@
+packages:
+  - "apps/*"
+allowBuilds:
+  '@scarf/scarf': false
+  '@swc/core': true
+  esbuild: true
+  koffi: true
+  mongodb-memory-server: true
+  onnxruntime-node: true
+minimumReleaseAgeExclude:
+  - '@aws-sdk/client-bedrock-runtime@3.1149.0'
+  - '@aws-sdk/core@3.978.2'
+  - '@aws-sdk/credential-provider-env@3.972.73'
+  - '@aws-sdk/credential-provider-http@3.972.75'
+  - '@aws-sdk/credential-provider-ini@3.973.18'
+  - '@aws-sdk/credential-provider-login@3.972.80'
+  - '@aws-sdk/credential-provider-node@3.972.85'
+  - '@aws-sdk/credential-provider-process@3.972.73'
+  - '@aws-sdk/credential-provider-sso@3.973.17'
+  - '@aws-sdk/credential-provider-web-identity@3.972.79'
+  - '@aws-sdk/eventstream-handler-node@3.972.36'
+  - '@aws-sdk/middleware-eventstream@3.972.31'
+  - '@aws-sdk/middleware-websocket@3.972.55'
+  - '@aws-sdk/nested-clients@3.997.47'
+  - '@aws-sdk/signature-v4-multi-region@3.996.48'
+  - '@aws-sdk/token-providers@3.1149.0'
+  - '@oxlint-tsgolint/darwin-arm64@7.0.2004'
+  - '@oxlint-tsgolint/darwin-x64@7.0.2004'
+  - '@oxlint-tsgolint/linux-arm64@7.0.2004'
+  - '@oxlint-tsgolint/linux-x64@7.0.2004'
+  - '@oxlint-tsgolint/win32-arm64@7.0.2004'
+  - '@oxlint-tsgolint/win32-x64@7.0.2004'
+  - oxlint-tsgolint@7.0.2004

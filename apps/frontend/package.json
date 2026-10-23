@@ -1,0 +1,48 @@
+{
+  "name": "@kanso/frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "oxlint --type-aware --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "gen:api-hooks": "orval --config orval.config.ts",
+    "gen:api": "orval --config orval.config.ts"
+  },
+  "dependencies": {
+    "@daily-co/daily-js": "^0.84.0",
+    "@daily-co/daily-react": "^0.23.2",
+    "@modelcontextprotocol/ext-apps": "^2.0.3",
+    "@tavus/embed": "^0.19.2",
+    "jotai": "^2.15.0",
+    "lucide-react": "^0.546.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.3",
+    "zod": "^4.6.5",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.14",
+    "@types/node": "^24.6.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-basic-ssl": "^2.3.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "orval": "^7.13.0",
+    "oxfmt": "^0.72.0",
+    "oxlint": "^1.87.0",
+    "oxlint-tsgolint": "^7.0.2004",
+    "tailwindcss": "^4.1.14",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.9",
+    "vite-plugin-oxlint": "^2.2.0",
+    "vite-plugin-pwa": "^2.0.0"
+  }
+}

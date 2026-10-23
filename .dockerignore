@@ -1,0 +1,11 @@
+**/node_modules
+**/dist
+**/.env
+**/.env.local
+**/*.tsbuildinfo
+.git
+.claude
+.vite
+screenshots
+docs/demo/*.mp4
+extensions/*.js

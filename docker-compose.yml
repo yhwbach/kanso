@@ -1,0 +1,12 @@
+# Optional: a local MongoDB for development.
+# If MONGODB_URI is not set, the backend falls back to an in-memory MongoDB
+# (mongodb-memory-server), so this file is only needed for persistent data.
+services:
+  mongo:
+    image: mongo:8
+    ports:
+      - "27017:27017"
+    volumes:
+      - kanso-mongo:/data/db
+volumes:
+  kanso-mongo:

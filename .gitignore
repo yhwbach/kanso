@@ -1,0 +1,15 @@
+node_modules/
+dist/
+build/
+.env
+.env.local
+*.log
+.DS_Store
+.vite/
+coverage/
+# user-generated extensions are kept, but their compiled artifacts are not
+extensions/*.js
+
+.claude/
+scripts/demo/
+docs/demo/SCRIPT.md
